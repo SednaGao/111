@@ -1,0 +1,53 @@
+/job
+    /list
+    /create
+    /update
+    /get
+    /enable
+    /run
+    /pause
+    /stop
+    /if-crawlers-idle
+
+/log
+    /get_from_db
+    /get_from_runtime
+
+/service
+    /list
+    /create
+    /get
+    /enable
+    /call
+
+/executor
+    /list
+    /create
+    /get
+    /delete
+
+/spider
+    /list
+    /create
+    /stop
+    /suspend
+    /resume
+
+/dupdb
+    /list
+    /delete
+
+/queue
+    /list
+    /pause
+    /resume
+
+
+
+model:
+
+executor
+    id
+    title
+    description
+    url

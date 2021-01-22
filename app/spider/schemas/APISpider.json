@@ -1,0 +1,10 @@
+{
+    "definitions": {},
+    "$id": "APISpider",
+    "type": "object",
+    "title": "The Root Schema",
+    "required": [
+   ],
+   "properties": {
+   }
+}

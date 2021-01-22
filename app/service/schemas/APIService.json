@@ -1,0 +1,10 @@
+{
+    "definitions": {},
+    "$id": "APIService",
+    "type": "object",
+    "title": "The Root Schema",
+    "required": [
+   ],
+   "properties": {
+   }
+}

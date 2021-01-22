@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>API DOCUMENTS</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+<div class="container-fluid">
+    <center><h1>Api Document</h1></center>
+    {#    <center><a href="/api-doc/md" target="_blank">Download Markdown Version</a></center>#}
+    <a name="toc"></a>
+    <div class="row">
+        <div class="col-xs-5 col-md-3">
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-success text-center">Toc Index</li>
+                {% for bp in gen.blueprint_ins %}
+                    <li class="list-group-item text-center">{{ bp.name }}</li>
+                    {% for f in bp.funcs %}
+                        <li class="list-group-item">{{ f.link() | safe }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+
+        </div>
+        <div class="col-xs-7 col-md-9">
+            {% for bp in gen.blueprint_ins %}
+                <div class="well">{{ bp.name }}</div>
+                {% for f in bp.funcs %}
+                    {{ f.anchor() | safe }}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">{{ f.description }}</div>
+                        <div class="panel-body">
+                            {#                    {% if f.has_content %}#}
+                            {#                    <pre>{{ f.content }}</pre>#}
+                            {#                    {% endif %}#}
+                            <dl class="dl-horizontal">
+                                <dt>URL</dt>
+                                <dd>{{ f.url | escape }}</dd>
+                            </dl>
+                            <dl class="dl-horizontal">
+                                <dt>HTTP Method</dt>
+                                <dd><h4><span class="label label-danger">{{ f.method }}</span>&nbsp;&nbsp;</h4>
+                                </dd>
+                            </dl>
+                            {% if f.url_params %}
+                                <dl class="dl-horizontal">
+                                    <dt>URL Parameters</dt>
+                                    <dd>
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for k, v in f.url_params.items() %}
+                                                <tr>
+                                                    {% for col in v %}
+                                                        <td>{{ col }}</td>
+                                                    {% endfor %}
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </dd>
+                                </dl>
+                            {% endif %}
+                            {% if f.json_example %}
+                                <dl class="dl-horizontal">
+                                    <dt>JSON输入示例</dt>
+                                    <dd>
+                                        <pre style='white-space: pre-wrap;'>{{ f.json_example }}</pre>
+                                    </dd>
+                                </dl>
+                            {% endif %}
+                            {% if f.schema %}
+                                <dl class="dl-horizontal">
+                                    <dt>validator schema</dt>
+                                    <dd>
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{ f.uid }}-{{ f.method }}-json-schema">
+                                          查看schema
+                                        </button>
+                                    </dd>
+                                </dl>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="{{ f.uid }}-{{ f.method }}-json-schema" tabindex="-1" role="dialog" aria-labelledby="{{ f.uid }}-{{ f.method }}-json-schema" aria-hidden="true">
+                                  <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="{{ f.uid }}-{{ f.method }}-json-schema-title">{{ f.name }}: JSON schema</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                          <pre style='white-space: pre-wrap;'>{{ f.schema }}</pre>
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            {% endif %}
+                            {% if f.query_params %}
+                                <dl class="dl-horizontal">
+                                    <dt>QueryString</dt>
+                                    <dd>
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Require</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for row in f.query_params %}
+                                                <tr>
+                                                    {% for col in row.get_arr() %}
+                                                        <td>{{ col }}</td>
+                                                    {% endfor %}
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </dd>
+                                </dl>
+                            {% endif %}
+                            {% if f.json_body %}
+                                <dl class="dl-horizontal">
+                                    <dt>Json Body</dt>
+                                    <dd>
+                                        <pre>{{ f.json_body }}</pre>
+                                    </dd>
+                                </dl>
+                            {% else %}
+                                {% if f.form_params %}
+                                    <!--如果有form表单的时候的内容 //-->
+                                    <dl class="dl-horizontal">
+                                        <dt>Forms</dt>
+                                        <dd>
+                                            <table class="table table-bordered table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Require</th>
+                                                    <th>Type</th>
+                                                    <th>Description</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for row in f.form_params %}
+                                                    <tr>
+                                                        {% for col in row.get_arr() %}
+                                                            <td>{{ col }}</td>
+                                                        {% endfor %}
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </dd>
+                                    </dl>
+                                {% endif %}
+                            {% endif %}
+                            {% if f.return_value().success_string %}
+                                <dl class="dl-horizontal">
+                                    <dt>Return Value</dt>
+
+                                    <dd>
+                                        <h4>成功：</h4>
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <pre style='white-space: pre-wrap;'>{{ f.return_value().success_string }}</pre>
+                                            </div>
+                                        </div>
+                                    </dd>
+                                </dl>
+                            {% endif %}
+                            <dl class="dl-horizontal">
+                                <dd>
+                                    <h4>失败：</h4>
+                                    <table class="table table-bordered table-hover">
+
+                                        <thead>
+                                        <tr>
+                                            <th>code</th>
+                                            <th>error message</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% if f.return_value().filure_dic %}
+                                            {% for k, v in f.return_value().filure_dic.items() %}
+                                                <tr>
+
+                                                    <td>{{ k }}</td>
+                                                    <td>{{ v }}</td>
+
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        {% endif %}
+                                    </table>
+                                    <!--                            <pre>{{ f.return_value() }}</pre>-->
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="panel-footer">
+                            <a href="#toc"><span class="glyphicon glyphicon-arrow-up"></span></a>
+                            &nbsp; &nbsp;
+                            <a data-toggle="modal" data-target="#test-fly-{{ f.uid }}"><span
+                                    class="glyphicon glyphicon-send"></span></a>
+                        </div>
+                    </div>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="test-fly-{{ f.uid }}" tabindex="-1" role="dialog"
+                         aria-labelledby="myModalLabel_{{ f.uid }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span
+                                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <h4 class="modal-title" id="myModalLabel_{{ f.uid }}">{{ f.name }}</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="result_{{ f.uid }}"></div>
+                                    <form class="form-horizontal" role="form" id="header-form-{{ f.uid }}"
+                                          method="post">
+
+                                        <div class="form-group">
+                                            <label for="method_{{ f.uid }}"
+                                                   class="col-sm-2 control-label">Method</label>
+                                            <input type="hidden" id="url-{{ f.uid }}" value="{{ f.url }}">
+                                            <div class="col-sm-10">
+                                                <select name="method" id="method_{{ f.uid }}" class="form-control">
+                                                    <option value="{{ f.method }}">{{ f.method }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                    <form class="form-horizontal" role="form" id="url-form-{{ f.uid }}" method="post">
+                                        {% if f.url_params %}
+                                            <div class="form-group">
+                                                <div class="col-sm-offset-2 col-sm-10">
+                                                    URL Parameters
+                                                </div>
+                                            </div>
+                                            {% for k, v in f.url_params.items() %}
+                                                <div class="form-group">
+                                                    <label for="u_{{ f.uid }}_{{ k }}"
+                                                           class="col-sm-2 control-label">{{ k }}</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" name="u_{{ k }}"
+                                                               class="form-control url_param"
+                                                               id="u_{{ f.uid }}_{{ k }}">
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </form>
+                                    <form class="form-horizontal" role="form" id="query-form-{{ f.uid }}" method="get">
+                                        {% if f.query_params %}
+                                            <div class="form-group">
+                                                <div class="col-sm-offset-2 col-sm-10">
+                                                    Querystring Parameters
+                                                </div>
+                                            </div>
+                                            {% for row in f.query_params %}
+                                                <div class="form-group">
+                                                    <label for="q-{{ f.uid }}_{{ row.get_arr()[0] }}"
+                                                           class="col-sm-2 control-label">{{ row.get_arr()[0] }}</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" name="{{ row.get_arr()[0] }}"
+                                                               class="form-control query_param"
+                                                               id="q-{{ f.uid }}_{{ row.get_arr()[0] }}">
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </form>
+                                    {% if f.json_body %}
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="json-body-{{ f.uid }}" id="post-json-{{ f.uid }}">JSON
+                                                    BODY</label>
+                                                <textarea class="form-control" id="json-body-{{ f.uid }}" cols="60"
+                                                          rows="10"></textarea>
+                                            </div>
+                                        </form>
+                                    {% else %}
+                                        <form class="form-horizontal" role="form" id="post-form-{{ f.uid }}"
+                                              method="get">
+                                            {% if f.form_params %}
+                                                <div class="form-group">
+                                                    <div class="col-sm-offset-2 col-sm-10">
+                                                        Form Parameters
+                                                    </div>
+                                                </div>
+                                                {% for row in f.form_params %}
+                                                    <div class="form-group">
+                                                        <label for="f-{{ f.uid }}_{{ row.get_arr()[0] }}"
+                                                               class="col-sm-2 control-label">{{ row.get_arr()[0] }}</label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" name="{{ row.get_arr()[0] }}"
+                                                                   class="form-control query_param"
+                                                                   id="f-{{ f.uid }}_{{ row.get_arr()[0] }}">
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </form>
+                                    {% endif %}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary execute-btn"
+                                            form-bind-id="{{ f.uid }}">
+                                        Execute
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    var gif_url = "/api-doc/loading.gif";
+
+
+    function gen_url(idx) {
+        var url = $("#url-" + idx).val();
+        var url_pattern_form = $("#url-form-" + idx).serializeArray();
+        for (var i = 0; i < url_pattern_form.length; i++) {
+            var url_param = url_pattern_form[i];
+            var regExp = new RegExp("<" + url_param['name'].substring(2) + ">", 'gi');
+            url = url.replace(regExp, url_param['value']);
+        }
+        var query_form = $("#query-form-" + idx).serialize();
+
+        return url + "?" + query_form;
+    }
+
+    function send_data(idx) {
+        var result = {};
+        var url_pattern_form = $("#url-form-" + idx).serializeArray();
+        for (var i = 0; i < url_pattern_form.length; i++) {
+            var url_param = url_pattern_form[i];
+            result[url_param.name.substring(2)] = url_param.value;
+            // var regExp = new RegExp("<"+url_param['name'].substring(2)+">", 'gi');
+            // url = url.replace(regExp, url_param['value']);
+
+        }
+
+        var url = gen_url(idx);
+        var method = $("#method_" + idx).val();
+        var use_json = false;
+
+        var form_data = $("#post-form-" + idx).serialize();
+
+        var json_data = $("#json-body-" + idx).val();
+        if (typeof json_data === 'undefined') {
+        } else {
+            form_data = json_data;
+            use_json = true;
+        }
+        var auth = $("#auth_" + idx).val();
+        $("#result_" + idx).html("<center><img src='" + gif_url + "'/></center>");
+        if (use_json) {
+            $.ajax({
+                type: method,
+                url: url,
+                headers: {'Authorization': auth},
+                data: form_data,
+                contentType: 'application/json',
+                dataType: 'text',
+                success: function (data) {
+                    $("#result_" + idx).html("<pre>" + data + "</pre>");
+                },
+                error: function () {
+                    alert('error handing here');
+                    $("#result_" + idx).html("");
+                }
+            });
+        } else {
+            $.ajax({
+                type: method,
+                url: url,
+                headers: {'Authorization': auth},
+                data: result,
+                dataType: "text",
+                success: function (data) {
+                    $("#result_" + idx).html("<pre>" + data + "</pre>");
+                },
+                error: function () {
+                    alert('error handing here');
+                    $("#result_" + idx).html("");
+                }
+            });
+        }
+
+
+    }
+
+    $(function () {
+        $(".execute-btn").click(function () {
+            var fid = $(this).attr('form-bind-id');
+            var data = $("#" + fid).serialize();
+            send_data(fid);
+        });
+        $("#b64a-str").click(function () {
+            $.post('/api-doc/b64str', {s: $('#b64str').val()}, function (rt) {
+                $('#global-auth-header').val("Basic " + rt.rt);
+            }, 'json')
+        })
+    });
+</script>
+</body>
+</html>

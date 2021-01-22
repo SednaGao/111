@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{{ str }}
+{% if who %}
+: "{{ who }}"!
+{% endif %}
+
+    <form method="GET" action="{{url_for('user.ViewExampleHelloWorld')}}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+           {{ form.who }}
+           {{ form.submit }}
+      </form>
+</body>
+</html>

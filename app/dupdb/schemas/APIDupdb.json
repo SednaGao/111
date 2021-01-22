@@ -1,0 +1,10 @@
+{
+    "definitions": {},
+    "$id": "APIDupdb",
+    "type": "object",
+    "title": "The Root Schema",
+    "required": [
+   ],
+   "properties": {
+   }
+}

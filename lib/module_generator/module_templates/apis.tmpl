@@ -1,0 +1,31 @@
+from flask import request, url_for, redirect, render_template, current_app as app
+from flask_restful import Resource as RestfulResource
+@$model_import
+from flask_security import current_user
+from .. import api, params, json_validator
+from wtforms import *
+
+
+class @$classname(RestfulResource):
+    @params({
+        'who': StringField(validators=[validators.length(max=10), validators.DataRequired()]),
+        'a': StringField(validators=[validators.DataRequired()]),
+    })
+    @api
+    def get(self):
+        """
+        an example api view function
+        :param resource_id: resource_id
+        :type resource_id:int
+
+        :return:
+            :success:
+                {
+                    "key": "value"
+                }
+            :failure:
+                -1,xxxx
+                -2,xxxx
+        """
+        app.logger.debug('example api called')
+        return "hello world, this is @$classname apis"

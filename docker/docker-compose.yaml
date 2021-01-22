@@ -1,0 +1,33 @@
+version: '3.7'
+services:
+  flask-mvc-base:
+    image: flask-mvc-base
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.base
+    env_file:
+      - ../config/env
+    restart: always
+    volumes:
+      - /tmp/scc-fe_log/:/log
+  scc-fe:
+    image: scc-fe
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+      args:
+        ui_code_version: tmp
+        fe_code_version: tmp
+      shm_size: '1gb'
+    container_name: scc-fe
+    environment:
+      - UI_CODE_VERSION
+      - FE_CODE_VERSION
+    env_file:
+      - ../config/env
+    restart: always
+    volumes:
+      - /tmp/scc-fe_log/:/log
+    ports:
+      - "33688:8088"
+      - "33680:80"
